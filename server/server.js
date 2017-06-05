@@ -20,7 +20,16 @@ app.post('/todos', (req, res) => {
 	}, (e) => {
 		res.status(400).send(e);
 	});
-})
+});
+
+// always pass object not arrays through res.send
+app.get('/todos', (req, res) => {
+	Todo.find().then((todos) => {
+		res.send({todos});
+	}, (e) => {
+		res.status(400).send(e);
+	});
+});
 
 app.listen(3000, () => {
 	console.log('started on port 3000');
