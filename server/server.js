@@ -50,7 +50,7 @@ app.get('/todos/:id', (req, res) => {
 	});
 });
 
-app.delete('todos/:id', (req, res) => {
+app.delete('/todos/:id', (req, res) => {
 	// get the id
 	var id = req.params.id;
 
