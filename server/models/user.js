@@ -43,6 +43,9 @@ var UserSchema = new mongoose.Schema({
 	}]
 });
 
+
+/* Instance Methods */
+// overriden method
 UserSchema.methods.toJSON = function () {
 	var user = this;
 	var userObject = user.toObject();
@@ -59,11 +62,32 @@ UserSchema.methods.generateAuthToken = function () {
 		access: access
 	}, 'abc123').toString();
 
-	// es6 syntax on access and token
+	// es6 syntax on access and token, holds all tokens
 	user.tokens.push({access, token});
 	return user.save().then(() => {
 		return token;
 	});
+};
+
+/* Model Methods */
+UserSchema.statics.findByToken = function(token) {
+	var User = this;
+	var decoded;
+
+	try {
+		decoded = jwt.verify(token, 'abc123');
+	} catch(e) {
+		// return new Promise((resolve, reject) => {
+		// 	reject();
+		// });
+		return Promise.reject();
+	}
+
+	return User.findOne({
+		'_id': decoded._id,
+		'tokens.token': token,
+		'tokens.access': 'auth'
+	})
 };
 
 var User = mongoose.model('User', UserSchema);
